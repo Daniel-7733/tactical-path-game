@@ -1,19 +1,50 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.py[cod]
+*.so
 
-# Virtual environment
+# =========================
+# Virtual Environment
+# =========================
+.venv/
 venv/
+ENV/
 .env/
+env/
 
-# OS
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+
+# =========================
+# OS files
+# =========================
 .DS_Store
 Thumbs.db
 
-# VS Code
-.vscode/
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
 
+# =========================
 # Logs
+# =========================
 *.log
+
+# =========================
+# VS Code
+# =========================
+.vscode/
