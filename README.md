@@ -22,15 +22,3 @@ Players draw attack paths during a planning phase. After time runs out, units mo
 pip install -r requirements.txt
 python main.py
 ```
-
-
----
-
-# 🔄 11. Your daily workflow from now on
-
-Every time you work:
-
-```bash
-git add .
-git commit -m "Add movement system"   # or whatever you did
-git push
