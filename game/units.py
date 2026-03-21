@@ -54,14 +54,14 @@ import pygame
 
 class Unit:
     def __init__(self, x, y, direction, color) -> None:
-        self.x = x
-        self.y = y
-        self.direction = direction
-        self.color = color
+        self.x: float = x
+        self.y: float = y
+        self.direction: int = direction
+        self.color: tuple[int, int, int] = color
 
-        self.x_velocity = 0.5
-        self.y_velocity = 0.5
-        self.radius = 10
+        self.x_velocity: float = 0.5
+        self.y_velocity: float = 0.5
+        self.radius: int = 10
 
     def draw(self, surface) -> None:
         pygame.draw.circle(
