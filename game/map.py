@@ -10,75 +10,78 @@
                         battle result
 """
 import pygame
-
-def is_road(color: tuple[int, int, int]) -> bool:
-    """
-    Key Gray Scale Ranges (0-255 scale):
-    Light Gray: rgb(211, 211, 211) - rgb(220, 220, 220)
-    Medium Gray: rgb(128, 128, 128) - rgb(169, 169, 169)
-    Dark Gray: rgb(50, 50, 50) - rgb(105, 105, 105)
-
-    :param color: take the rgb value from 0 to 255
-    :return: true or false if the function find the target color
-    """
-    r, g, b = color
-    return r < 128 and g < 128 and b < 128  # "almost black"
+from pygame import Surface
+from data.settings import TILE_SIZE
 
 
-def draw_tile_from_map(address) -> list[list[int]]:
-    """
-    Generate tiles (of 0 and 1) from the map picture.
-    :param address: map picture address
-    :return: a list or 0 and 1 in a list.
-    """
-    map = pygame.image.load(address)
-    tile_size: int = 32
-    width, height = map.get_size()
+class Map:
+    def __init__(self, image_path: str, screen_width: int, screen_height: int) -> None:
+        self.image_path: str = image_path
 
-    grid: list[list[int]] = []
+        self.image: Surface = pygame.image.load(self.image_path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (screen_width, screen_height))
 
-    for y in range(0, height, tile_size):
-        row: list[int] = []
-        for x in range(0, width, tile_size):
+        self.width: int = self.image.get_width()
+        self.height: int = self.image.get_height()
 
-            color: tuple[int, int, int] = map.get_at((x, y))[:3]  # get pixel color
+        self.grid: list[list[int]] = self.generate_tile_grid()
 
-            if is_road(color):
-                row.append(0)
-            else:
-                row.append(1)
+    def draw(self, surface: Surface) -> None:
+        """Draw the map on the screen."""
+        surface.blit(self.image, (0, 0))
 
-        grid.append(row)
-
-    print(grid)
-    return grid
+    def is_road(self, color: tuple[int, int, int]) -> bool:
+        """
+        Return True if the sampled pixel matches the road color range.
+        This currently assumes roads are bright yellow/beige pixels.
+        """
+        r, g, b = color
+        return r > 240 and g > 187 and b > 72
 
 
+    def generate_tile_grid(self) -> list[list[int]]:
+        """
+        Generate a grid from the map image.
+        0 = walkable road
+        1 = blocked tile
+        """
+        grid: list[list[int]] = []
 
-test_map: list[list[int]] = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1]
-]
+        for y in range(0, self.height, TILE_SIZE):
+            row: list[int] = []
+
+            for x in range(0, self.width, TILE_SIZE):
+                color: tuple[int, int, int] = self.image.get_at((x, y))[:3]
+
+                if self.is_road(color):
+                    row.append(0)
+                else:
+                    row.append(1)
+
+            grid.append(row)
+
+        return grid
+
+
+    def print_color_under_mouse(self) -> None:
+        """
+        Print the RGBA color value under the mouse cursor.
+        Useful for debugging map colors.
+        """
+        mouse_pos: tuple[int, int] = pygame.mouse.get_pos()
+
+        try:
+            pixel_color = self.image.get_at(mouse_pos)
+            print(f"Pixel color at {mouse_pos}: {pixel_color}")
+
+            red = pixel_color.r
+            green = pixel_color.g
+            blue = pixel_color.b
+            alpha = pixel_color.a
+
+            print(f"RGBA values: R={red}, G={green}, B={blue}, A={alpha}")
+
+        except IndexError:
+            print("Mouse is outside the image bounds.")
+
+
