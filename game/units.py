@@ -50,10 +50,22 @@
 
 """
 import pygame
+from data.settings import TILE_SIZE
+from game.map import Map
 
 
 class Unit:
+    """This class represents a unit; how it works"""
     def __init__(self, x, y, direction, color) -> None:
+        """
+        Initializer for Unit
+
+        :param x: Position of unit on x-axis of screen
+        :param y: Position of unit on y-axis of screen
+        :param direction: this one give direction to the movement of unit (it is either 1 or -1)
+        :param color: unit's color is RGB value in tuple form
+        :return: None
+        """
         self.x: float = x
         self.y: float = y
         self.direction: int = direction
@@ -64,6 +76,11 @@ class Unit:
         self.radius: int = 10
 
     def draw(self, surface) -> None:
+        """
+        Draw unit (circle) on screen
+        :param surface: surface to draw the map on (screen)
+        :return: None
+        """
         pygame.draw.circle(
             surface,
             self.color,
@@ -71,6 +88,32 @@ class Unit:
             self.radius,
         )
 
-    def move(self) -> None:
-        self.x += self.x_velocity * self.direction
-        self.y += self.y_velocity * self.direction
+    def move(self, game_map: Map) -> None:
+        """
+         This function force the unit to move on screen
+         :param game_map: This argument accept Map class object
+         :return: None
+        """
+        if self.can_move(game_map):
+            self.x += self.x_velocity * self.direction
+            self.y += self.y_velocity * self.direction
+
+    def can_move(self, game_map: Map) -> bool:
+        """
+        This function check if the unit can move on screen.
+
+        :param game_map: This argument accept Map class object
+        :return: True if unit can move otherwise return False
+        """
+        # Calculation next x and y
+        next_x: float = self.x + self.x_velocity * self.direction
+        next_y: float = self.y + self.y_velocity * self.direction
+
+        # Calculating the next Tile on both axes
+        tile_x: int = int(next_x // TILE_SIZE)
+        tile_y: int = int(next_y // TILE_SIZE)
+
+        # This one check if the object stay inside bounds
+        if 0 <= tile_y < len(game_map.grid) and 0 <= tile_x < len(game_map.grid[0]):
+            return game_map.grid[tile_y][tile_x] == 1
+        return False

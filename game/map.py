@@ -15,11 +15,17 @@ from data.settings import TILE_SIZE
 
 
 class Map:
+    """This class represents the map on the screen."""
     def __init__(self, image_path: str, screen_width: int, screen_height: int) -> None:
-        self.image_path: str = image_path
-
-        self.image: Surface = pygame.image.load(self.image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (screen_width, screen_height))
+        """
+        Initialize the map.
+        :param image_path: Add the image or map path (Address)
+        :param screen_width: Screen width size
+        :param screen_height: Screen height size
+        :return: None
+        """
+        self.image: Surface = pygame.image.load(image_path).convert_alpha()
+        self.image: Surface = pygame.transform.scale(self.image, (screen_width, screen_height))
 
         self.width: int = self.image.get_width()
         self.height: int = self.image.get_height()
@@ -27,23 +33,29 @@ class Map:
         self.grid: list[list[int]] = self.generate_tile_grid()
 
     def draw(self, surface: Surface) -> None:
-        """Draw the map on the screen."""
+        """
+        Draw the map on the screen.
+        :param surface: surface to draw the map on (screen)
+        :return: None
+        """
         surface.blit(self.image, (0, 0))
 
     def is_road(self, color: tuple[int, int, int]) -> bool:
         """
         Return True if the sampled pixel matches the road color range.
         This currently assumes roads are bright yellow/beige pixels.
+        :param color: accept color as RGB formated tuple
+        :return: True or False
         """
         r, g, b = color
-        return r > 240 and g > 187 and b > 72
-
+        return r > 200 and g > 170 and b < 140 # Detect yellow road (tuned for your map)
 
     def generate_tile_grid(self) -> list[list[int]]:
         """
         Generate a grid from the map image.
-        0 = walkable road
-        1 = blocked tile
+        1 = walkable road
+        0 = blocked tile
+        :return: list[list[int]] -> full data map grid.
         """
         grid: list[list[int]] = []
 
@@ -54,17 +66,37 @@ class Map:
                 color: tuple[int, int, int] = self.image.get_at((x, y))[:3]
 
                 if self.is_road(color):
-                    row.append(0)
+                    row.append(1) # road
                 else:
-                    row.append(1)
+                    row.append(0) # block
 
             grid.append(row)
 
         return grid
 
+    def draw_grid_debug(self, surface: Surface) -> None:
+        """
+        Draw the grid on the screen for debugging.
+        :param surface: surface to draw the map on (screen)
+        :return: None
+        """
+        for y, row in enumerate(self.grid):
+            for x, cell in enumerate(row):
+                if cell == 0:
+                    color: tuple[int, int, int] = (255, 0, 0)  # blocked
+                else:
+                    color = (0, 255, 0)  # road
+
+                pygame.draw.rect(
+                    surface,
+                    color,
+                    (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE),
+                    1
+                )
 
     def print_color_under_mouse(self) -> None:
         """
+        This is for debugging purposes.
         Print the RGBA color value under the mouse cursor.
         Useful for debugging map colors.
         """
@@ -74,14 +106,13 @@ class Map:
             pixel_color = self.image.get_at(mouse_pos)
             print(f"Pixel color at {mouse_pos}: {pixel_color}")
 
-            red = pixel_color.r
-            green = pixel_color.g
-            blue = pixel_color.b
-            alpha = pixel_color.a
+            red: int = pixel_color.r
+            green: int = pixel_color.g
+            blue: int = pixel_color.b
+            alpha: int = pixel_color.a
 
             print(f"RGBA values: R={red}, G={green}, B={blue}, A={alpha}")
 
         except IndexError:
             print("Mouse is outside the image bounds.")
-
 
