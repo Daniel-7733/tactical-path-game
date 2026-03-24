@@ -31,7 +31,7 @@ class Game:
         self.fps: int = FPS
 
         # Initializing units
-        self.red_unit = Unit(100, 100, 1, (186, 13, 33))
+        self.red_unit = Unit(1030, 170, 1, (186, 13, 33))
         self.blue_unit = Unit(500, 470, -1, (26, 7, 190))
 
         # Initializing the Map class
@@ -61,12 +61,14 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
 
-            self.blue_unit.move(self.game_map)
-
             # draw
             self.game_map.draw(screen)  # 1. draw background map first
-            self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
-            self.blue_unit.draw(screen)  # 3. draw units on top
+            # self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
+            # self.blue_unit.draw(screen)  # 3. draw units on top
+            # self.red_unit.draw(screen)
+
+            self.blue_unit.display_rifleman(screen)
+            self.blue_unit.move(self.game_map)
 
             pygame.display.flip()
             clock.tick(self.fps)

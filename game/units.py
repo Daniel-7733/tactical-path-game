@@ -50,6 +50,8 @@
 
 """
 import pygame
+from pygame import Surface, Rect
+
 from data.settings import TILE_SIZE
 from game.map import Map
 
@@ -87,6 +89,21 @@ class Unit:
             (int(self.x), int(self.y)),
             self.radius,
         )
+
+    def display_rifleman(self, surface) -> None:
+        """
+        Display rifleman on the screen
+        :param surface: surface to draw the map on (screen)
+        :return: None
+        """
+        load_rifleman_man: Surface = pygame.image.load("assets/images/Rifleman-friend.png").convert_alpha()
+        rifleman_man_rect: Rect = load_rifleman_man.get_rect()
+        rifleman_man_rect.x = int(self.x)
+        rifleman_man_rect.y = int(self.y)
+
+        resized_rifleman_man = pygame.transform.scale(load_rifleman_man, (10, 10))
+
+        surface.blit(resized_rifleman_man, rifleman_man_rect) # instead of displaying the load_rifleman_man, I choose resized_rifleman_man because the resizing the img
 
     def move(self, game_map: Map) -> None:
         """
