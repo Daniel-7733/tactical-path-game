@@ -131,6 +131,4 @@ class Unit:
         tile_y: int = int(next_y // TILE_SIZE)
 
         # This one check if the object stay inside bounds
-        if 0 <= tile_y < len(game_map.grid) and 0 <= tile_x < len(game_map.grid[0]):
-            return game_map.grid[tile_y][tile_x] == 1
-        return False
+        return game_map.is_title_walkable(tile_x, tile_y)

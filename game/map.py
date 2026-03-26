@@ -94,6 +94,30 @@ class Map:
                     1
                 )
 
+    def is_title_walkable(self, tiles_x: int, tiles_y: int) -> bool:
+        """
+        This function make a simple model to determine if the tile is walkable for the obj.
+
+        (y) == (Rows)
+         ↓
+        [
+        [0, 0, 1, 1, 0],
+        [0, 1, 1, 0, 0],
+        [0, 0, 1, 0, 0]
+        ]
+         → (x) == (Columns)
+
+        So the current form of checking is grid[y][x] (grid[row][column])
+
+        :param tiles_x: The size of title_x (like 10)
+        :param tiles_y: The size of title_y (like 10)
+        :return: True if tile
+
+        """
+        if 0 <= tiles_y < len(self.grid) and 0 <= tiles_x < len(self.grid[0]):
+            return self.grid[tiles_y][tiles_x] == 1
+        return False
+
     def print_color_under_mouse(self) -> None:
         """
         This is for debugging purposes.
