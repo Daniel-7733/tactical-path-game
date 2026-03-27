@@ -3,6 +3,6 @@
 """
 SCREEN_WIDTH: int = 1500
 SCREEN_HEIGHT: int = 800
-TILE_SIZE: int = 15 #25
+TILE_SIZE: int = 5 #25
 FPS: int = 60
 PLANNING_TIME: int = 10
