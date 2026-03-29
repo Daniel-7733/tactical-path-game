@@ -94,7 +94,7 @@ class Map:
                     1
                 )
 
-    def is_title_walkable(self, tiles_x: int, tiles_y: int) -> bool:
+    def is_tile_walkable(self, tiles_x: int, tiles_y: int) -> bool:
         """
         This function make a simple model to determine if the tile is walkable for the obj.
 

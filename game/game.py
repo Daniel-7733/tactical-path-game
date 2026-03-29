@@ -64,11 +64,16 @@ class Game:
             # draw
             self.game_map.draw(screen)  # 1. draw background map first
             self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
-            # self.blue_rifleman.draw(screen)  # 3. draw units on top
-            # self.red_rifleman.draw(screen)
+            self.blue_rifleman.display_rifleman(screen) # 3. draw units on top
 
-            self.blue_rifleman.display_rifleman(screen)
-            self.blue_rifleman.move(self.game_map)
+
+            self.blue_rifleman.set_path([
+                (500, 100),
+                (500, 300),
+                (700, 300),
+            ])
+            self.blue_rifleman.allow_movement()
+            self.blue_rifleman.move_along_path(self.game_map)
 
             pygame.display.flip()
             clock.tick(self.fps)
