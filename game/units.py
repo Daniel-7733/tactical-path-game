@@ -220,6 +220,12 @@ class Unit:
         :param game_map: This argument accept Map class object
         :return: None
         """
+
+        # TODO: Fix this function:
+        """ 
+        This one is a fine function but its not good for my unit; it need more details or changes
+        because my unit is not smart enough to walk and decide which direction is good to choose
+        """
         if not self.can_move_by_command:
             return
 
