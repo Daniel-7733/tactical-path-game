@@ -213,6 +213,39 @@ class Unit:
         """
         self.try_move_to(self.x + self.speed, self.y, game_map)
 
+    # for big diagonal direction (up-left, up-right, down-left, down-right)
+    def move_up_left(self, game_map: Map) -> None:
+        """
+        Move the unit up and left
+        :param game_map: This argument accept Map class object
+        :return: None
+        """
+        self.try_move_to(self.x - self.speed, self.y - self.speed, game_map)
+
+    def move_up_right(self, game_map: Map) -> None:
+        """
+        Move the unit up and right
+        :param game_map: This argument accept Map class object
+        :return: None
+        """
+        self.try_move_to(self.x + self.speed, self.y - self.speed, game_map)
+
+    def move_down_left(self, game_map: Map) -> None:
+        """
+        Move the unit down and left
+        :param game_map: This argument accept Map class object
+        :return: None
+        """
+        self.try_move_to(self.x - self.speed, self.y + self.speed, game_map)
+
+    def move_down_right(self, game_map: Map) -> None:
+        """
+        Move the unit down and right
+        :param game_map: This argument accept Map class object
+        :return: None
+        """
+        self.try_move_to(self.x + self.speed, self.y + self.speed, game_map)
+
     # unit will choose path to go
     def move_along_path(self, game_map: Map) -> None:
         """
