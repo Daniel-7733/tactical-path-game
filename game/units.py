@@ -175,7 +175,10 @@ class Unit:
         """
         tile_x: int = int(next_x // TILE_SIZE)
         tile_y: int = int(next_y // TILE_SIZE)
-
+        print("RIGHT TEST")
+        print("next_x, next_y =", next_x, next_y)
+        print("tile_x, tile_y =", tile_x, tile_y)
+        print("walkable =", game_map.is_tile_walkable(tile_x, tile_y))
         if game_map.is_tile_walkable(tile_x, tile_y):
             self.x = next_x
             self.y = next_y
@@ -246,6 +249,45 @@ class Unit:
         """
         self.try_move_to(self.x + self.speed, self.y + self.speed, game_map)
 
+    def get_current_target(self) -> tuple[int, int] | None:
+        """
+        Find the target point (x, y).
+        :return: tuple form of x and y
+        """
+        if self.path_index >= len(self.path):
+            return None
+        return self.path[self.path_index]
+
+    def is_close_to_target(self, target_x: float, target_y: float) -> bool:
+        """
+        Find if the x and y point are close to target point.
+        :param target_x: Target x coordinate
+        :param target_y: Target y coordinate
+        :return: True if points are close to target otherwise False
+        """
+        return abs(self.x - target_x) <= self.speed and abs(self.y - target_y) <= self.speed
+
+    def draw_path(self, surface: pygame.Surface) -> None:
+        """
+        Draw the path with a straight line
+        :param surface: pygame.Surface (screen) is needed to draw a line on the map
+        :return:
+        """
+        if len(self.path) > 1:
+            pygame.draw.lines(surface, (255, 0, 0), False, self.path, 3)
+
+    def draw_waypoints(self, surface: pygame.Surface) -> None:
+        """
+        Draw the waypoints or dot on the map
+        :param surface: pygame.Surface (screen) is needed to draw a dot on the map
+        :return: none
+        """
+        for i, (x, y) in enumerate(self.path):
+            color: tuple[int, int, int] = (255, 255, 0)
+            if i == self.path_index:
+                color = (0, 255, 0)  # current target
+            pygame.draw.circle(surface, color, (int(x), int(y)), 6)
+
     # unit will choose path to go
     def move_along_path(self, game_map: Map) -> None:
         """
@@ -253,22 +295,25 @@ class Unit:
         :param game_map: This argument accept Map class object
         :return: None
         """
-
-        # TODO: Fix this function:
-        """ 
-        This one is a fine function but its not good for my unit; it need more details or changes
-        because my unit is not smart enough to walk and decide which direction is good to choose
-        """
         if not self.can_move_by_command:
+            print("Movement not allowed")
             return
 
         if self.path_index >= len(self.path):
+            print("Path finished")
             return
 
         target_x, target_y = self.path[self.path_index]
-        close_enough: float = self.speed
+
+        print("-----")
+        print(f"path_index: {self.path_index}")
+        print(f"current position: ({self.x}, {self.y})")
+        print(f"target position: ({target_x}, {target_y})")
+
+        close_enough = self.speed
 
         if abs(self.x - target_x) <= close_enough and abs(self.y - target_y) <= close_enough:
+            print("Reached target point")
             self.x = target_x
             self.y = target_y
             self.path_index += 1
@@ -276,11 +321,16 @@ class Unit:
 
         if abs(self.x - target_x) > close_enough:
             if self.x < target_x:
+                print("Trying to move right")
                 self.move_right(game_map)
             else:
+                print("Trying to move left")
                 self.move_left(game_map)
+
         elif abs(self.y - target_y) > close_enough:
             if self.y < target_y:
+                print("Trying to move down")
                 self.move_down(game_map)
             else:
+                print("Trying to move up")
                 self.move_up(game_map)

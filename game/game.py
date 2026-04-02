@@ -31,15 +31,24 @@ class Game:
         self.fps: int = FPS
 
         # Initializing font
-        self.pixeltype_font_path = "assets/fonts/Pixeltype.ttf"
-        self.eurostile_font_path = "assets/fonts/eurostile.TTF"
         self.blackOpsOne_font_path = "assets/fonts/BlackOpsOne-Regular.ttf"
 
 
         # Initializing units
         self.red_rifleman = Unit(100, 100, "red", "rifleman", 100, 2, 80, 10)
         self.blue_rifleman = Unit(381, 380, "blue", "rifleman", 100, 2, 80, 10)
-
+        self.blue_rifleman.set_path(
+            [
+                (380, 396),
+                (902, 396),
+                (902, 324),
+                (1031, 324),
+                (1031, 234),
+                (1230, 234),
+                (1230, 304),
+                (1335, 304),
+            ]
+        )
         # Initializing the Map class
         self.game_map: Map | None = None
 
@@ -75,21 +84,13 @@ class Game:
             # self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
             self.blue_rifleman.display_rifleman(screen) # 3. draw units on top
 
-            self.blue_rifleman.set_path(
-                [
-                    (380, 396),
-                    (902, 396),
-                    (902, 324),
-                    (1031, 324),
-                    (1031, 234),
-                    (1220, 234),
-                    (1220, 304),
-                    (1335, 304),
-                ]
-            )
+
             self.blue_rifleman.allow_movement()
             self.blue_rifleman.move_along_path(self.game_map)
 
+            self.blue_rifleman.draw_path(screen)
+            self.blue_rifleman.draw_waypoints(screen)
+            self.blue_rifleman.display_rifleman(screen)
 
             # get the x and y
             x, y = pygame.mouse.get_pos()
