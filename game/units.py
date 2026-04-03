@@ -52,9 +52,6 @@
 import pygame
 from pygame import Surface, Rect
 
-from data.settings import TILE_SIZE
-from game.map import Map
-
 
 class Unit:
     """This class represents a unit; how it works"""
@@ -80,16 +77,14 @@ class Unit:
         self.speed: float = speed
         self.attack_range: int = attack_range
         self.damage: int = damage
-        self.x_velocity: float = 0.5
-        self.y_velocity: float = 0.5
-        self.direction: int = 1  # 1 or -1
+
 
         # This part is for unit to walk
         self.path: list[tuple[float, float]] = [] # list of target points
         self.path_index: int = 0 # which point we are currently moving toward
         self.can_move_by_command = False # permission to move
 
-    def draw(self, surface: Surface) -> None:
+    def draw(self, surface: pygame.Surface) -> None:
         """
         Draw unit (circle) on screen
         :param surface: surface to draw the map on (screen)
@@ -102,7 +97,7 @@ class Unit:
             10,
         )
 
-    def display_rifleman(self, surface: Surface) -> None:
+    def display_rifleman(self, surface: pygame.Surface) -> None:
         """
         Display rifleman on the screen
         :param surface: surface to draw the map on (screen)
@@ -118,26 +113,6 @@ class Unit:
         surface.blit(resized_rifleman_man,
                      rifleman_man_rect)  # instead of displaying the load_rifleman_man, I choose resized_rifleman_man because the resizing the img
 
-    def find_next_x_and_y_coordination(self) -> tuple[float, float]:
-        """
-        Calculate Next x coordinate and y coordination
-        :return: x and y coordination as tuple
-        """
-        next_x: float = self.x + self.x_velocity * self.direction
-        next_y: float = self.y + self.y_velocity * self.direction
-        return next_x, next_y
-
-    def calculate_next_x_and_y_tile(self) -> tuple[int, int]:
-        """
-        Calculate Next x tile and y tile
-        :return: x and y tile as tuple
-        """
-        next_x, next_y = self.find_next_x_and_y_coordination()
-        tile_x: int = int(next_x // TILE_SIZE)
-        tile_y: int = int(next_y // TILE_SIZE)
-        return tile_x, tile_y
-
-    # set up for movement
     def set_path(self, path: list[tuple[float, float]]) -> None:
         """
         give the unit a new path
@@ -164,173 +139,3 @@ class Unit:
         :return: None
         """
         self.can_move_by_command = False
-
-    def try_move_to(self, next_x: float, next_y: float, game_map: Map) -> None:
-        """
-        This function try to move the unit
-        :param next_x: Add the next x coordinate
-        :param next_y: Add the next y coordinate
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        tile_x: int = int(next_x // TILE_SIZE)
-        tile_y: int = int(next_y // TILE_SIZE)
-        print("RIGHT TEST")
-        print("next_x, next_y =", next_x, next_y)
-        print("tile_x, tile_y =", tile_x, tile_y)
-        print("walkable =", game_map.is_tile_walkable(tile_x, tile_y))
-        if game_map.is_tile_walkable(tile_x, tile_y):
-            self.x = next_x
-            self.y = next_y
-
-    # for big direction (up, down, left, right)
-    def move_up(self, game_map: Map) -> None:
-        """
-        Move the unit up
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x, self.y - self.speed, game_map)
-
-    def move_down(self, game_map: Map) -> None:
-        """
-        Move the unit down
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x, self.y + self.speed, game_map)
-
-    def move_left(self, game_map: Map) -> None:
-        """
-        Move the unit left
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x - self.speed, self.y, game_map)
-
-    def move_right(self, game_map: Map) -> None:
-        """
-        Move the unit right
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x + self.speed, self.y, game_map)
-
-    # for big diagonal direction (up-left, up-right, down-left, down-right)
-    def move_up_left(self, game_map: Map) -> None:
-        """
-        Move the unit up and left
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x - self.speed, self.y - self.speed, game_map)
-
-    def move_up_right(self, game_map: Map) -> None:
-        """
-        Move the unit up and right
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x + self.speed, self.y - self.speed, game_map)
-
-    def move_down_left(self, game_map: Map) -> None:
-        """
-        Move the unit down and left
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x - self.speed, self.y + self.speed, game_map)
-
-    def move_down_right(self, game_map: Map) -> None:
-        """
-        Move the unit down and right
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        self.try_move_to(self.x + self.speed, self.y + self.speed, game_map)
-
-    def get_current_target(self) -> tuple[int, int] | None:
-        """
-        Find the target point (x, y).
-        :return: tuple form of x and y
-        """
-        if self.path_index >= len(self.path):
-            return None
-        return self.path[self.path_index]
-
-    def is_close_to_target(self, target_x: float, target_y: float) -> bool:
-        """
-        Find if the x and y point are close to target point.
-        :param target_x: Target x coordinate
-        :param target_y: Target y coordinate
-        :return: True if points are close to target otherwise False
-        """
-        return abs(self.x - target_x) <= self.speed and abs(self.y - target_y) <= self.speed
-
-    def draw_path(self, surface: pygame.Surface) -> None:
-        """
-        Draw the path with a straight line
-        :param surface: pygame.Surface (screen) is needed to draw a line on the map
-        :return:
-        """
-        if len(self.path) > 1:
-            pygame.draw.lines(surface, (255, 0, 0), False, self.path, 3)
-
-    def draw_waypoints(self, surface: pygame.Surface) -> None:
-        """
-        Draw the waypoints or dot on the map
-        :param surface: pygame.Surface (screen) is needed to draw a dot on the map
-        :return: none
-        """
-        for i, (x, y) in enumerate(self.path):
-            color: tuple[int, int, int] = (255, 255, 0)
-            if i == self.path_index:
-                color = (0, 255, 0)  # current target
-            pygame.draw.circle(surface, color, (int(x), int(y)), 6)
-
-    # unit will choose path to go
-    def move_along_path(self, game_map: Map) -> None:
-        """
-        Move the unit along the path.
-        :param game_map: This argument accept Map class object
-        :return: None
-        """
-        if not self.can_move_by_command:
-            print("Movement not allowed")
-            return
-
-        if self.path_index >= len(self.path):
-            print("Path finished")
-            return
-
-        target_x, target_y = self.path[self.path_index]
-
-        print("-----")
-        print(f"path_index: {self.path_index}")
-        print(f"current position: ({self.x}, {self.y})")
-        print(f"target position: ({target_x}, {target_y})")
-
-        close_enough = self.speed
-
-        if abs(self.x - target_x) <= close_enough and abs(self.y - target_y) <= close_enough:
-            print("Reached target point")
-            self.x = target_x
-            self.y = target_y
-            self.path_index += 1
-            return
-
-        if abs(self.x - target_x) > close_enough:
-            if self.x < target_x:
-                print("Trying to move right")
-                self.move_right(game_map)
-            else:
-                print("Trying to move left")
-                self.move_left(game_map)
-
-        elif abs(self.y - target_y) > close_enough:
-            if self.y < target_y:
-                print("Trying to move down")
-                self.move_down(game_map)
-            else:
-                print("Trying to move up")
-                self.move_up(game_map)

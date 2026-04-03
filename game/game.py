@@ -16,6 +16,7 @@ from pygame.time import Clock
 from data.settings import FPS, SCREEN_WIDTH, SCREEN_HEIGHT
 from game.units import Unit
 from game.map import Map
+from game import movement
 
 
 class Game:
@@ -84,13 +85,10 @@ class Game:
             # self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
             self.blue_rifleman.display_rifleman(screen) # 3. draw units on top
 
-
             self.blue_rifleman.allow_movement()
-            self.blue_rifleman.move_along_path(self.game_map)
-
-            self.blue_rifleman.draw_path(screen)
-            self.blue_rifleman.draw_waypoints(screen)
-            self.blue_rifleman.display_rifleman(screen)
+            movement.move_along_path(self.blue_rifleman, self.game_map)
+            movement.draw_path(self.blue_rifleman, screen)
+            movement.draw_waypoints(self.blue_rifleman, screen)
 
             # get the x and y
             x, y = pygame.mouse.get_pos()
