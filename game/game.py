@@ -14,10 +14,10 @@ from pygame import Surface
 from pygame.time import Clock
 
 from data.settings import FPS, SCREEN_WIDTH, SCREEN_HEIGHT
+from game.path_manager import PathManager
 from game.units import Unit
 from game.map import Map
 from game import movement
-
 
 class Game:
     """This class implements game logic"""
@@ -52,6 +52,7 @@ class Game:
         )
         # Initializing the Map class
         self.game_map: Map | None = None
+        self.path_manager = PathManager()
 
     def run(self) -> None:
         """
@@ -79,9 +80,22 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
 
+            # mouse part that help user to draw base on mouse down & uo
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.path_manager.handle_mouse_down(event.pos, event.button)
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.path_manager.handle_mouse_up(event.pos, event.button)
+            # -----------------------------------------
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        waypoints = self.path_manager.lines_to_waypoints()
+                        self.blue_rifleman.set_path(waypoints)
+                        self.blue_rifleman.allow_movement()
 
             # draw
             self.game_map.draw(screen)  # 1. draw background map first
+            self.path_manager.draw(screen)
             # self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
             self.blue_rifleman.display_rifleman(screen) # 3. draw units on top
 
