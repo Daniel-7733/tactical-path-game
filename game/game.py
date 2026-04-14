@@ -79,6 +79,11 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            # user can shoot when he/she press f
+                #TODO: now user press and shoot, later, unit automatically shoot when user press F
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_f:
+                        self.blue_rifleman.shoot()
 
             # mouse part that help user to draw base on mouse down & uo
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -93,11 +98,15 @@ class Game:
                         self.blue_rifleman.set_path(waypoints)
                         self.blue_rifleman.allow_movement()
 
+
+
+            self.blue_rifleman.update_bullets()
             # draw
             self.game_map.draw(screen)  # 1. draw background map first
             self.path_manager.draw(screen)
             # self.game_map.draw_grid_debug(screen)  # 2. draw debug grid on top
             self.blue_rifleman.display_rifleman(screen) # 3. draw units on top
+            self.blue_rifleman.draw_bullets(screen)
 
             self.blue_rifleman.allow_movement()
             movement.move_along_path(self.blue_rifleman, self.game_map)

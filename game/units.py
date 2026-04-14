@@ -50,7 +50,7 @@
 
 """
 import pygame
-from pygame import Surface, Rect
+from pygame import Surface, Rect, surface
 
 
 class Unit:
@@ -83,6 +83,8 @@ class Unit:
         self.path: list[tuple[float, float]] = [] # list of target points
         self.path_index: int = 0 # which point we are currently moving toward
         self.can_move_by_command = False # permission to move
+
+        self.bullets: list[dict[str, float]] = []
 
     def draw(self, surface: pygame.Surface) -> None:
         """
@@ -139,3 +141,46 @@ class Unit:
         :return: None
         """
         self.can_move_by_command = False
+
+    # TODO: Bullets should have range. EX: 10 unit
+    def draw_bullets(self, screen: Surface) -> None:
+        """
+        Draw all bullets on the screen.
+
+        :param screen: Surface to draw on.
+        :return: None
+        """
+        for bullet in self.bullets:
+            pygame.draw.circle(
+                screen,
+                (255, 247, 10),
+                (int(bullet["x"]), int(bullet["y"])),
+                3,
+            )
+
+    def shoot(self) -> None:
+        """
+        Create a new bullet starting from the unit position.
+
+        For now, the bullet will move to the right.
+
+        :return: None
+        """
+        bullet: dict[str, float] = {
+            "x": self.x,
+            "y": self.y,
+            "dx": 1,
+            "dy": 0,
+            "speed": 8,
+        }
+        self.bullets.append(bullet)
+
+    def update_bullets(self) -> None:
+        """
+        Move all bullets forward.
+
+        :return: None
+        """
+        for bullet in self.bullets:
+            bullet["x"] += bullet["dx"] * bullet["speed"]
+            bullet["y"] += bullet["dy"] * bullet["speed"]
