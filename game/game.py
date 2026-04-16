@@ -67,7 +67,7 @@ class Game:
         font = pygame.font.Font(self.blackOpsOne_font_path, 40)
 
         self.game_map = Map(
-            "assets/images/Map.png",
+            "assets/images/MapSimpleLandRiver.png", # "assets/images/Map.png"
             self.screen_width,
             self.screen_height
         )
@@ -79,24 +79,31 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            # user can shoot when he/she press f
+
                 #TODO: now user press and shoot, later, unit automatically shoot when user press F
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN: # user can shoot when he/she press f
                     if event.key == pygame.K_f:
                         self.blue_rifleman.shoot()
 
-            # mouse part that help user to draw base on mouse down & uo
+            # mouse part that help user to draw base on mouse down & up
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.path_manager.handle_mouse_down(event.pos, event.button)
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.path_manager.handle_mouse_up(event.pos, event.button)
             # -----------------------------------------
-                elif event.type == pygame.KEYDOWN:
+
+                elif event.type == pygame.KEYDOWN: # This one isn't working
                     if event.key == pygame.K_SPACE:
+                        print("Space pressed")
                         waypoints = self.path_manager.lines_to_waypoints()
                         self.blue_rifleman.set_path(waypoints)
                         self.blue_rifleman.allow_movement()
+
+                elif event.type == pygame.KEYDOWN: # This one isn't working
+                    if event.key == pygame.K_c:
+                        print("C pressed")
+                        self.path_manager.clear()
 
 
 
@@ -118,6 +125,7 @@ class Game:
             x_y_coordination = font.render(f"({x},{y})", True, (0, 0, 0))
             text_rect = x_y_coordination.get_rect()
             screen.blit(x_y_coordination, text_rect)
+            # self.game_map.color_recognizer(screen, x, y)
 
             pygame.display.flip()
             clock.tick(self.fps)

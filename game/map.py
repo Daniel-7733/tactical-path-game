@@ -48,7 +48,8 @@ class Map:
         :return: True or False
         """
         r, g, b = color
-        return r > 200 and g > 170 and b < 140 # Detect yellow road (tuned for your map)
+        # return r > 200 and g > 170 and b < 140 # Detect yellow road (tuned for your map)
+        return r == 15 and g == 127 and b == 0 # River -> R=0, G=158, B=217... Land (green) R=15, G=127, B=0
 
     def generate_tile_grid(self) -> list[list[int]]:
         """
@@ -140,3 +141,20 @@ class Map:
         except IndexError:
             print("Mouse is outside the image bounds.")
 
+    def color_recognizer(self, surface: Surface, x_pos, y_pos) -> None:
+        """
+        This function will find the color of the pixel at the given coordinates.
+        :param surface: surface to draw the map on (screen)
+        :param x_pos: x position on screen
+        :param y_pos: y position on screen
+        :return: None
+        """
+        color_obj = surface.get_at((x_pos, y_pos)) # Get the color of a pixel at coordinates (x, y)
+
+        red = color_obj.r
+        green = color_obj.g
+        blue = color_obj.b
+
+        rgb_tuple = tuple(color_obj[:3]) # Convert to a simple (R, G, B) tuple
+        print(f"On ({x_pos}, {y_pos}) point, RGB tuple: {rgb_tuple}")
+        print(f"RGBA values: R={red}, G={green}, B={blue}")
