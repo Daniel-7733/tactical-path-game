@@ -14,6 +14,7 @@
 import pygame
 from game.map import Map
 from data.settings import TILE_SIZE
+import math
 
 from typing import TYPE_CHECKING
 
@@ -194,14 +195,7 @@ def draw_waypoints(unit: "Unit", surface: pygame.Surface) -> None:
 
 def move_along_path(unit: "Unit", game_map: Map) -> None:
     """
-    Move the unit along its path one waypoint at a time.
-
-    Flow:
-        1. Check whether movement is allowed.
-        2. Get the current target waypoint.
-        3. If close enough to the target, snap to it and advance path_index.
-        4. Otherwise move toward the target.
-        5. Movement still respects the map walkability check.
+    Move the unit toward the current waypoint in a straight direction.
 
     :param unit: The unit object that stores position, path, and movement permission.
     :param game_map: The map object used to check walkability.
@@ -222,14 +216,18 @@ def move_along_path(unit: "Unit", game_map: Map) -> None:
         unit.path_index += 1
         return
 
-    if abs(unit.x - target_x) > unit.speed:
-        if unit.x < target_x:
-            move_right(unit, game_map)
-        else:
-            move_left(unit, game_map)
+    dx: float = target_x - unit.x
+    dy: float = target_y - unit.y
+    distance: float = math.hypot(dx, dy)
 
-    elif abs(unit.y - target_y) > unit.speed:
-        if unit.y < target_y:
-            move_down(unit, game_map)
-        else:
-            move_up(unit, game_map)
+    if distance == 0:
+        return
+
+    dir_x: float = dx / distance
+    dir_y: float = dy / distance
+
+    next_x: float = unit.x + dir_x * unit.speed
+    next_y: float = unit.y + dir_y * unit.speed
+
+    try_move_to(unit, next_x, next_y, game_map)
+

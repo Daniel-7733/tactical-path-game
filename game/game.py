@@ -38,18 +38,18 @@ class Game:
         # Initializing units
         self.red_rifleman = Unit(100, 100, "red", "rifleman", 100, 2, 80, 10)
         self.blue_rifleman = Unit(381, 380, "blue", "rifleman", 100, 2, 80, 10)
-        self.blue_rifleman.set_path(
-            [
-                (380, 396),
-                (902, 396),
-                (902, 324),
-                (1031, 324),
-                (1031, 234),
-                (1230, 234),
-                (1230, 304),
-                (1335, 304),
-            ]
-        )
+        # self.blue_rifleman.set_path(
+        #     [
+        #         (380, 396),
+        #         (902, 396),
+        #         (902, 324),
+        #         (1031, 324),
+        #         (1031, 234),
+        #         (1230, 234),
+        #         (1230, 304),
+        #         (1335, 304),
+        #     ]
+        # )
         # Initializing the Map class
         self.game_map: Map | None = None
         self.path_manager = PathManager()
@@ -80,28 +80,26 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
 
-                #TODO: now user press and shoot, later, unit automatically shoot when user press F
-                elif event.type == pygame.KEYDOWN: # user can shoot when he/she press f
-                    if event.key == pygame.K_f:
-                        self.blue_rifleman.shoot()
-
-            # mouse part that help user to draw base on mouse down & up
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.path_manager.handle_mouse_down(event.pos, event.button)
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.path_manager.handle_mouse_up(event.pos, event.button)
-            # -----------------------------------------
 
-                elif event.type == pygame.KEYDOWN: # This one isn't working
-                    if event.key == pygame.K_SPACE:
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_f:
+                        self.blue_rifleman.shoot()
+
+                    elif event.key == pygame.K_SPACE:
                         print("Space pressed")
                         waypoints = self.path_manager.lines_to_waypoints()
-                        self.blue_rifleman.set_path(waypoints)
-                        self.blue_rifleman.allow_movement()
 
-                elif event.type == pygame.KEYDOWN: # This one isn't working
-                    if event.key == pygame.K_c:
+                        if waypoints:
+                            self.blue_rifleman.set_path(waypoints)
+                            self.blue_rifleman.allow_movement()
+                            self.path_manager.clear()
+
+                    elif event.key == pygame.K_c:
                         print("C pressed")
                         self.path_manager.clear()
 
